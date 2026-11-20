@@ -1,5 +1,7 @@
+
 import unittest
 from main import App
+
 
 class StubIO:
     def __init__(self, inputs=None):
@@ -12,10 +14,17 @@ class StubIO:
     def write(self, value):
         self.outputs.append(value)
 
+
 class TestLisaaKomento(unittest.TestCase):
     def test_lisaa_kysyy_tiedot(self):
-        io = StubIO(["lisaa", "kirja", "Meikäläinen, Maija", "Kolme muskettisoturia", 
-                     "2009", "lopeta"])
+        io = StubIO([
+            "lisaa",
+            "kirja",
+            "Meikäläinen, Maija",
+            "Kolme muskettisoturia",
+            "2009",
+            "lopeta"
+        ])
 
         app = App(io)
         app.run()
@@ -24,4 +33,21 @@ class TestLisaaKomento(unittest.TestCase):
         self.assertEqual(app.references[0]["type"], "kirja")
         self.assertEqual(app.references[0]["author"], "Meikäläinen, Maija")
         self.assertEqual(app.references[0]["title"], "Kolme muskettisoturia")
-        self.assertEqual(app.references[0]["year"], "2009")    
+        self.assertEqual(app.references[0]["year"], "2009")
+
+
+def test_virheellista_viitetta_ei_lisata():
+    io = StubIO([
+        "lisaa",
+        "kirja",
+        "Meikäläinen, Maija",
+        "Kolme muskettisoturia",
+        "20a9",
+        "lopeta"
+    ])
+
+    app = App(io)
+    app.run()
+
+    assert len(app.references) == 0
+    assert "Viitettä ei tallennettu" in io.outputs
