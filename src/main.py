@@ -17,10 +17,12 @@ class App:
 
     def run(self):
         while True:
-            command = self.io.read("Komento (lisaa tai lopeta): ")
+            command = self.io.read("Komento (lisaa, listaa tai lopeta): ")
 
             if command == "lisaa":
                 self.add_reference()
+            elif command == "listaa":
+                self.list_references()
             elif command == "lopeta":
                 break
             else:
@@ -46,6 +48,24 @@ class App:
         self.references.append(reference)
         self.io.write("Viite lisätty")
 
+    def list_references(self):
+
+        if not self.references:
+            self.io.write("Ei tallennettuja viitteitä.")
+            return
+
+        for reference in self.references:
+            self.io.write(format_reference(reference))
+
+def format_reference(reference):
+    """Muodostaa viitteestä yhden rivin esityksen."""
+
+    return (
+        f"{reference['author']} "
+        f"({reference['year']}): "
+        f"{reference['title']} "
+        f"[{reference['type']}]"
+    )
 
 def main():
     App(ConsoleIO()).run()
