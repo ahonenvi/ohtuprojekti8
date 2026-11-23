@@ -1,5 +1,6 @@
 
 from validation import validate_reference
+from storage import load_references, save_references
 
 
 class ConsoleIO:
@@ -13,7 +14,8 @@ class ConsoleIO:
 class App:
     def __init__(self, io):
         self.io = io
-        self.references = []
+        self.references = load_references()
+
 
     def run(self):
         while True:
@@ -46,6 +48,7 @@ class App:
             return
 
         self.references.append(reference)
+        save_references(self.references)
         self.io.write("Viite lisätty")
 
     def list_references(self):

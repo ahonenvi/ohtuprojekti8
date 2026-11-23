@@ -1,21 +1,22 @@
 import json
 from pathlib import Path
 
+base = Path(__file__).parent
+ref_file = base / "references.json"
 
-def save_references(references, file_path):
+
+def save_references(references):
     """Tallentaa viitteet JSON-tiedostoon."""
-    file_path = Path(file_path)
 
-    with open(file_path, "w", encoding="utf-8") as file:
+    with open(ref_file, "w", encoding="utf-8") as file:
         json.dump(references, file, ensure_ascii=False, indent=4)
 
 
-def load_references(file_path):
+def load_references():
     """Lataa viitteet JSON-tiedostosta."""
-    file_path = Path(file_path)
 
-    if not file_path.exists():
+    if not ref_file.exists():
         return []
 
-    with open(file_path, "r", encoding="utf-8") as file:
+    with open(ref_file, "r", encoding="utf-8") as file:
         return json.load(file)
