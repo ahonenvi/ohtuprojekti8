@@ -1,4 +1,7 @@
+import os
+import tempfile
 import unittest
+
 from main import App, format_reference
 
 
@@ -13,8 +16,12 @@ class StubIO:
 class TestListaus(unittest.TestCase):
 
     def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
         self.io = StubIO()
-        self.app = App(self.io)
+        self.app = App(self.io, os.path.join(self.tmp.name, "refs.json"))
+
+    def tearDown(self):
+        self.tmp.cleanup()
 
     def test_tyhjien_viitteiden_listaus(self):
         self.app.list_references()
@@ -87,5 +94,3 @@ class TestListaus(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-    
