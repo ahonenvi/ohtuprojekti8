@@ -34,7 +34,7 @@ class App:
 
     def add_reference(self):
         reference = {
-            "type": self.io.read("Viitteen tyyppi: "),
+            "type": self.io.read("Viitteen tyyppi (book, article, inproceedings): "),
             "author": self.io.read("Tekijä: "),
             "title": self.io.read("Otsikko: "),
             "year": self.io.read("Julkaisuvuosi: "),
