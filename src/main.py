@@ -35,7 +35,7 @@ class App:
     def add_reference(self):
         reference = {
             "type": self.io.read("Viitteen tyyppi (book, article, inproceedings): "),
-            "author": self.io.read("Tekijä: "),
+            "author": parse_authors(self.io.read("Tekijät: ")),
             "title": self.io.read("Otsikko: "),
             "year": self.io.read("Julkaisuvuosi: "),
         }
@@ -62,11 +62,20 @@ class App:
         for reference in self.references:
             self.io.write(format_reference(reference))
 
+
+def parse_authors(text):
+    return [author.strip() for author in text.split(";") if author.strip()]
+
 def format_reference(reference):
     """Muodostaa viitteestä yhden rivin esityksen."""
 
+    authors = reference["author"]
+
+    if isinstance(authors, str):
+        authors = [authors]
+
     return (
-        f"{reference['author']} "
+        f"{'; '.join(authors)} "
         f"({reference['year']}): "
         f"{reference['title']} "
         f"[{reference['type']}]"
