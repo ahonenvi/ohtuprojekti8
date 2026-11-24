@@ -1,5 +1,8 @@
 
+from storage import load_references, save_references
 from validation import validate_reference
+
+DEFAULT_FILE = "references.json"
 
 
 class ConsoleIO:
@@ -11,9 +14,10 @@ class ConsoleIO:
 
 
 class App:
-    def __init__(self, io):
+    def __init__(self, io, file_path=DEFAULT_FILE):
         self.io = io
-        self.references = []
+        self.file_path = file_path
+        self.references = load_references(file_path)
 
     def run(self):
         while True:
@@ -46,6 +50,7 @@ class App:
             return
 
         self.references.append(reference)
+        save_references(self.references, self.file_path)
         self.io.write("Viite lisätty")
 
     def list_references(self):

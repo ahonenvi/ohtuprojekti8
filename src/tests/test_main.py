@@ -1,5 +1,7 @@
-
+import os
+import tempfile
 import unittest
+
 from main import App
 
 
@@ -26,8 +28,9 @@ class TestLisaaKomento(unittest.TestCase):
             "lopeta"
         ])
 
-        app = App(io)
-        app.run()
+        with tempfile.TemporaryDirectory() as tmp:
+            app = App(io, os.path.join(tmp, "refs.json"))
+            app.run()
 
         self.assertEqual(len(app.references), 1)
         self.assertEqual(app.references[0]["type"], "kirja")
@@ -36,7 +39,7 @@ class TestLisaaKomento(unittest.TestCase):
         self.assertEqual(app.references[0]["year"], "2009")
 
 
-def test_virheellista_viitetta_ei_lisata():
+def test_virheellista_viitetta_ei_lisata(tmp_path):
     io = StubIO([
         "lisaa",
         "kirja",
@@ -46,7 +49,7 @@ def test_virheellista_viitetta_ei_lisata():
         "lopeta"
     ])
 
-    app = App(io)
+    app = App(io, tmp_path / "refs.json")
     app.run()
 
     assert len(app.references) == 0
