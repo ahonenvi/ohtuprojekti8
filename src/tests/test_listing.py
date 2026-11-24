@@ -91,6 +91,19 @@ class TestListaus(unittest.TestCase):
             "Matti Meikäläinen (2025): Python perusteet [book]"
         )
 
+    def test_useita_tekijoita_listauksessa(self):
+        reference = {
+            "type": "book",
+            "author": ["Meikäläinen, Maija", "Virtanen, Liisa"],
+            "title": "Python perusteet",
+            "year": "2025"
+        }
+
+        self.assertEqual(
+            format_reference(reference),
+            "Meikäläinen, Maija; Virtanen, Liisa (2025): Python perusteet [book]"
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

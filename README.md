@@ -31,7 +31,7 @@ Tarvitset uv komentorivityökalun. Lataa repositorio ja asenna riippuvuudet:
 Lisää uuden viitteen. Ohjelma kysyy seuraavat tiedot:
 
 - Viitteen tyyppi (book, article, inproceedings)
-- Tekijä (muodossa "Sukunimi, Etunimi")
+- Tekijä (muodossa "Sukunimi, Etunimi; Sukunimi, Etunimi")
 - Otsikko
 - Julkaisuvuosi
 

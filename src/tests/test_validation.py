@@ -11,7 +11,7 @@ from validation import validate_reference
 def test_valid_reference():
     reference = {
         "type": "book",
-        "author": "Meikäläinen, Maija",
+        "author": ["Meikäläinen, Maija"],
         "title": "Kolme muskettisoturia",
         "year": "2009"
     }
@@ -29,7 +29,7 @@ def test_valid_reference():
 def test_invalid_year(year):
     reference = {
         "type": "book",
-        "author": "Meikäläinen, Maija",
+        "author": ["Meikäläinen, Maija"],
         "title": "Kolme muskettisoturia",
         "year": year
     }
@@ -42,7 +42,7 @@ def test_invalid_year(year):
 def test_missing_author():
     reference = {
         "type": "book",
-        "author": "",
+        "author": [],
         "title": "Kolme muskettisoturia",
         "year": "2009"
     }
@@ -52,10 +52,23 @@ def test_missing_author():
     assert len(errors) > 0
 
 
+def test_tekijat_erotettu_pilkulla_puolipisteen_sijaan():
+    reference = {
+        "type": "book",
+        "author": ["Matti, Meikäläinen, Anssi, Kela"],
+        "title": "Kolme muskettisoturia",
+        "year": "2009",
+    }
+
+    errors = validate_reference(reference)
+
+    assert len(errors) == 1
+
+
 def test_missing_title():
     reference = {
         "type": "book",
-        "author": "Meikäläinen, Maija",
+        "author": ["Meikäläinen, Maija"],
         "title": "",
         "year": "2009"
     }
@@ -67,7 +80,7 @@ def test_missing_title():
 def test_tuntematon_tyyppi_antaa_virheen():
     reference = {
         "type": "kirja",
-        "author": "Meikäläinen, Maija",
+        "author": ["Meikäläinen, Maija"],
         "title": "Kolme muskettisoturia",
         "year": "2009",
     }
@@ -81,7 +94,7 @@ def test_sallitut_tyypit_hyvaksytaan():
     for ref_type in ("book", "article", "inproceedings"):
         reference = {
             "type": ref_type,
-            "author": "Meikäläinen, Maija",
+            "author": ["Meikäläinen, Maija"],
             "title": "Otsikko",
             "year": "2009",
         }

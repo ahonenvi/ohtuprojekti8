@@ -34,10 +34,29 @@ class TestLisaaKomento(unittest.TestCase):
 
         self.assertEqual(len(app.references), 1)
         self.assertEqual(app.references[0]["type"], "book")
-        self.assertEqual(app.references[0]["author"], "Meikäläinen, Maija")
+        self.assertEqual(app.references[0]["author"], ["Meikäläinen, Maija"])
         self.assertEqual(app.references[0]["title"], "Kolme muskettisoturia")
         self.assertEqual(app.references[0]["year"], "2009")
 
+
+def test_useita_tekijoita(tmp_path):
+    io = StubIO([
+            "lisaa",
+            "book",
+            "Meikäläinen, Maija; Ankka, Aku",
+            "Kolme muskettisoturia",
+            "2009",
+            "lopeta"
+        ])
+
+    app = App(io, tmp_path / "refs.json")
+    app.run()
+    
+    assert app.references[0]["author"] == [
+        "Meikäläinen, Maija",
+        "Ankka, Aku"
+    ]
+    
 
 def test_virheellista_viitetta_ei_lisata(tmp_path):
     io = StubIO([
