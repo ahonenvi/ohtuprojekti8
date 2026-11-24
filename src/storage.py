@@ -17,5 +17,8 @@ def load_references(file_path):
     if not file_path.exists():
         return []
 
-    with open(file_path, "r", encoding="utf-8") as file:
-        return json.load(file)
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except json.JSONDecodeError:
+        return []
