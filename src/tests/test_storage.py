@@ -55,3 +55,16 @@ def test_load_references_when_file_does_not_exist(tmp_path):
     loaded_references = load_references(file_path)
 
     assert loaded_references == []
+
+def test_load_references_with_invalid_json(tmp_path):
+    file_path = tmp_path / "references.json"
+    file_path.write_text("ei ole jsonia", encoding="utf-8")
+
+    assert load_references(file_path) == []
+
+
+def test_load_references_with_empty_file(tmp_path):
+    file_path = tmp_path / "references.json"
+    file_path.write_text("", encoding="utf-8")
+
+    assert load_references(file_path) == []
