@@ -1,6 +1,7 @@
 
 from storage import load_references, save_references
 from validation import validate_reference
+from keys import generate_key
 
 DEFAULT_FILE = "references.json"
 
@@ -49,9 +50,14 @@ class App:
             self.io.write("Viitettä ei tallennettu")
             return
 
+        existing_keys = [ref.get("key", "") for ref in self.references]
+        reference["key"] = generate_key(
+            reference["author"], reference["year"], existing_keys
+        )
+
         self.references.append(reference)
         save_references(self.references, self.file_path)
-        self.io.write("Viite lisätty")
+        self.io.write(f"Viite lisätty, viiteavain: {reference['key']}")
 
     def list_references(self):
 
@@ -70,12 +76,13 @@ def format_reference(reference):
     """Muodostaa viitteestä yhden rivin esityksen."""
 
     authors = reference["author"]
+    if isinstance(authors, list):
+        authors = "; ".join(authors)
 
-    if isinstance(authors, str):
-        authors = [authors]
-
+    key = reference.get("key", "-")
     return (
-        f"{'; '.join(authors)} "
+        f"[{key}] "
+        f"{authors} "
         f"({reference['year']}): "
         f"{reference['title']} "
         f"[{reference['type']}]"
