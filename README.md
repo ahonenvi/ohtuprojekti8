@@ -39,6 +39,12 @@ Jos jokin tieto puuttuu tai on virheellinen, ohjelma tulostaa virheilmoituksen
 eikä tallenna viitettä. Onnistuneen lisäyksen jälkeen ohjelma tulostaa
 "Viite lisätty".
 
+Ohjelma luo viitteelle viiteavaimen automaattisesti: yhdellä tekijällä etunimi
+ja vuoden kaksi viimeistä numeroa (esim. `Matti17`), usealla tekijällä
+sukunimien alkukirjaimet ja vuoden kaksi viimeistä numeroa (esim. `MN20`).
+Useampi tekijä erotetaan puolipisteellä (`Meikäläinen, Matti; Niinistö, Sauli`).
+Jos avain on jo käytössä, perään lisätään kirjain (`Matti17a`).
+
 ### listaa
 
 Tulostaa kaikki tallennetut viitteet, yksi viite per rivi muodossa:
