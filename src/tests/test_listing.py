@@ -71,12 +71,12 @@ class TestListaus(unittest.TestCase):
 
         self.assertEqual(
             self.io.outputs[0],
-            "[Matti25] Matti Meikäläinen (2025): Python perusteet [book]"
+            "[Liisa24] Liisa Virtanen (2024): Ohjelmoinnin oppiminen [article]"
         )
 
         self.assertEqual(
             self.io.outputs[1],
-            "[Liisa24] Liisa Virtanen (2024): Ohjelmoinnin oppiminen [article]"
+            "[Matti25] Matti Meikäläinen (2025): Python perusteet [book]"
         )
 
     def test_viitteen_muotoilu(self):
@@ -108,6 +108,37 @@ class TestListaus(unittest.TestCase):
             format_reference(reference),
             "[MV25] Meikäläinen, Maija; Virtanen, Liisa (2025): Python perusteet [book]"
         )
+
+    def test_listaus_on_aakkosjarjestyksessa(self):
+        self.app.references = [
+            {"type": "book", "key": "Z25", "author": ["Öhman, Olli"],
+             "title": "Kolmas", "year": "2025"},
+            {"type": "book", "key": "A25", "author": ["Aalto, Aino"],
+             "title": "Ensimmäinen", "year": "2025"},
+            {"type": "book", "key": "M25", "author": ["Mäki, Matti"],
+             "title": "Toinen", "year": "2025"},
+        ]
+
+        self.app.list_references()
+
+        self.assertEqual(
+            self.io.outputs,
+            [
+                "[A25] Aalto, Aino (2025): Ensimmäinen [book]",
+                "[M25] Mäki, Matti (2025): Toinen [book]",
+                "[Z25] Öhman, Olli (2025): Kolmas [book]",
+            ],
+        )
+
+    def test_listaus_ei_muuta_jarjestysta_muistissa(self):
+        self.app.references = [
+            {"type": "book", "key": "B", "author": ["B"], "title": "t", "year": "2025"},
+            {"type": "book", "key": "A", "author": ["A"], "title": "t", "year": "2025"},
+        ]
+
+        self.app.list_references()
+
+        self.assertEqual([r["key"] for r in self.app.references], ["B", "A"])
 
 
 if __name__ == "__main__":
