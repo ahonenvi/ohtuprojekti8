@@ -4,6 +4,11 @@ from validation import validate_reference
 from keys import generate_key
 
 DEFAULT_FILE = "references.json"
+EDIT_FIELDS = [
+    ("author", "Tekijä"),
+    ("title", "Otsikko"),
+    ("year", "Vuosi"),
+]
 
 
 class ConsoleIO:
@@ -102,8 +107,47 @@ class App:
         else:
             self.io.write("Viitettä ei poistettu.")
 
+    def find_reference(self, key):
+        for reference in self.references:
+            if reference.get("key", "").lower() == key.lower():
+                return reference
+        return None
+
+    def ask_edits(self, reference):
+        """Kysyy kentät nykyiset arvot hakasulkeissa.
+        Palauttaa vain ne kentät, joihin käyttäjä kirjoitti uuden arvon."""
+        changes = {}
+
+        for field, label in EDIT_FIELDS:
+            if field == "author":
+                current = author_text(reference)
+            else:
+                current = reference[field]
+
+            value = self.io.read(f"{label} [{current}]: ").strip()
+
+            if value:
+                changes[field] = value
+
+        return changes
+
     def edit_reference(self):
-        self.io.write("Muokkaus ei ole vielä käytössä")
+        key = self.io.read("Muokattavan viitteen viiteavain: ").strip()
+        reference = self.find_reference(key)
+
+        if reference is None:
+            self.io.write(f"Viitettä avaimella {key} ei löytynyt")
+            return
+
+        self.io.write(f"Muokataan viitettä {reference['key']}")
+        self.io.write("")
+
+        changes = self.ask_edits(reference)
+        self.apply_edits(reference, changes)
+
+    def apply_edits(self, reference, changes):
+        # Toisen tekijän osuus: validoi, päivitä ja tallenna.
+        self.io.write("Muokkausten tallennus ei ole vielä käytössä")
 
 def parse_authors(text):
     return [author.strip() for author in text.split(";") if author.strip()]
