@@ -22,12 +22,14 @@ class App:
 
     def run(self):
         while True:
-            command = self.io.read("Komento (lisaa, listaa, poista tai lopeta): ")
+            command = self.io.read("Komento (lisaa, listaa, muokkaa, poista tai lopeta): ")
 
             if command == "lisaa":
                 self.add_reference()
             elif command == "listaa":
                 self.list_references()
+            elif command == "muokkaa":
+                self.edit_reference()
             elif command == "poista":
                 self.remove_reference()
             elif command == "lopeta":
@@ -100,6 +102,8 @@ class App:
         else:
             self.io.write("Viitettä ei poistettu.")
 
+    def edit_reference(self):
+        self.io.write("Muokkaus ei ole vielä käytössä")
 
 def parse_authors(text):
     return [author.strip() for author in text.split(";") if author.strip()]

@@ -89,4 +89,11 @@ def test_tuntematon_tyyppi_ei_tallennu(tmp_path):
 
     assert len(app.references) == 0
     assert "Viitettä ei tallennettu" in io.outputs
+
+def test_muokkaa_komento_tunnistetaan(tmp_path):
+    io = StubIO(["muokkaa", "lopeta"])
+
+    App(io, tmp_path / "refs.json").run()
+
+    assert "Tuntematon komento" not in io.outputs
     
