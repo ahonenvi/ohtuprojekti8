@@ -67,7 +67,7 @@ class App:
             self.io.write("Ei tallennettuja viitteitä.")
             return
 
-        for reference in self.references:
+        for reference in sorted(self.references, key=sort_key):
             self.io.write(format_reference(reference))
 
     def remove_reference(self):
@@ -104,12 +104,22 @@ class App:
 def parse_authors(text):
     return [author.strip() for author in text.split(";") if author.strip()]
 
+def author_text(reference):
+    """Palauttaa tekijät yhtenä merkkijonona (lista tai merkkijono)."""
+    authors = reference["author"]
+    if isinstance(authors, list):
+        return "; ".join(authors)
+    return authors
+
+
+def sort_key(reference):
+    """Järjestää tekijän ja sitten otsikon mukaan kirjainkoosta riippumatta."""
+    return (author_text(reference).casefold(), reference["title"].casefold())
+
 def format_reference(reference):
     """Muodostaa viitteestä yhden rivin esityksen."""
 
-    authors = reference["author"]
-    if isinstance(authors, list):
-        authors = "; ".join(authors)
+    authors = author_text(reference)
 
     key = reference.get("key", "-")
     return (
