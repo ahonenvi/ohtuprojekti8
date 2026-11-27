@@ -150,4 +150,152 @@ def test_ask_edits_palauttaa_vain_syotetyt_kentat(tmp_path):
     changes = app.ask_edits(sample_reference())
 
     assert changes == {"title": "Uusi otsikko"}
+
+def test_muokkaus_tallentuu(tmp_path):
+    path = tmp_path / "refs.json"
+    save_references([sample_reference()], path)
+
+    io = StubIO([
+        "muokkaa",
+        "Matti17",
+        "",
+        "Uusi otsikko",
+        "",
+        "lopeta"
+    ])
+
+    app = App(io, path)
+    app.run()
+
+    assert app.references[0]["title"] == "Uusi otsikko"
+    assert app.references[0]["year"] == "2017"
+
+    saved = load_references(path)
+    assert saved[0]["title"] == "Uusi otsikko"
+
+def test_enter_sailyttaa_vanhat_arvot(tmp_path):
+    path = tmp_path / "refs.json"
+    save_references([sample_reference()], path)
+
+    io = StubIO([
+        "muokkaa",
+        "Matti17",
+        "",
+        "",
+        "",
+        "lopeta"
+    ])
+
+    app = App(io, path)
+    app.run()
+
+    assert app.references[0] == sample_reference()
+
+def test_virheellista_muokkausta_ei_tallenneta(tmp_path):
+    path = tmp_path / "refs.json"
+    save_references([sample_reference()], path)
+
+    io = StubIO([
+        "muokkaa",
+        "Matti17",
+        "",
+        "",
+        "20a9",
+        "lopeta"
+    ])
+
+    app = App(io, path)
+    app.run()
+
+    assert app.references[0]["year"] == "2017"
+    assert "Muutoksia ei tallennettu." in io.outputs
+
+def test_poista_komento_tunnistetaan(tmp_path):
+    io = StubIO(["poista", "lopeta"])
+
+    App(io, tmp_path / "refs.json").run()
+
+    assert "Tuntematon komento" not in io.outputs
+    assert "Ei poistettavia viitteitä." in io.outputs
+
+def test_viitteen_poisto_onnistuu(tmp_path):
+    path = tmp_path / "refs.json"
+    save_references([sample_reference()], path)
+
+    io = StubIO([
+        "poista",
+        "Matti17",
+        "kyllä",
+        "lopeta"
+    ])
+
+    app = App(io, path)
+    app.run()
+
+    assert len(app.references) == 0
+    assert load_references(path) == []
+    assert "Viite poistettu." in io.outputs
+
+def test_viitteen_poisto_perutaan(tmp_path):
+    path = tmp_path / "refs.json"
+    save_references([sample_reference()], path)
+
+    io = StubIO([
+        "poista",
+        "Matti17",
+        "ei",
+        "lopeta"
+    ])
+
+    app = App(io, path)
+    app.run()
+
+    assert len(app.references) == 1
+    assert app.references[0]["key"] == "Matti17"
+    assert load_references(path) == [sample_reference()]
+    assert "Viitettä ei poistettu." in io.outputs
+
+def test_poisto_tuntemattomalla_avaimella(tmp_path):
+    path = tmp_path / "refs.json"
+    save_references([sample_reference()], path)
+
+    io = StubIO([
+        "poista",
+        "Tuntematon99",
+        "lopeta"
+    ])
+
+    app = App(io, path)
+    app.run()
+
+    assert len(app.references) == 1
+    assert "Viitettä ei löytynyt." in io.outputs
+
+def test_poisto_tyhjasta_listasta(tmp_path):
+    io = StubIO([
+        "poista",
+        "lopeta"
+    ])
+
+    app = App(io, tmp_path / "refs.json")
+    app.run()
+
+    assert "Ei poistettavia viitteitä." in io.outputs
+
+def test_poistettava_viite_tulostetaan(tmp_path):
+    path = tmp_path / "refs.json"
+    save_references([sample_reference()], path)
+
+    io = StubIO([
+        "poista",
+        "Matti17",
+        "ei",
+        "lopeta"
+    ])
+
+    app = App(io, path)
+    app.run()
+
+    assert "Olet poistamassa seuraavaa viitettä:" in io.outputs
+    assert any("[Matti17]" in output for output in io.outputs)
     

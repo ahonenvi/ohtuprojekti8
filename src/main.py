@@ -146,8 +146,34 @@ class App:
         self.apply_edits(reference, changes)
 
     def apply_edits(self, reference, changes):
-        # Toisen tekijän osuus: validoi, päivitä ja tallenna.
-        self.io.write("Muokkausten tallennus ei ole vielä käytössä")
+        """Validoi, päivittää ja tallentaa viitteen muokkaukset."""
+        
+        if not changes:
+            self.io.write("Mitään muutoksia ei tehty.")
+            return
+
+        updated_reference = reference.copy()
+
+        for field, value in changes.items():
+            if field == "author":
+                updated_reference[field] = parse_authors(value)
+            else:
+                updated_reference[field] = value.strip()
+
+        errors = validate_reference(updated_reference)
+
+        if errors:
+            for error in errors:
+                self.io.write(error)
+
+            self.io.write("Muutoksia ei tallennettu.")
+            return
+
+        reference.update(updated_reference)
+
+        save_references(self.references, self.file_path)
+
+        self.io.write("Viite päivitetty onnistuneesti.")
 
 def parse_authors(text):
     return [author.strip() for author in text.split(";") if author.strip()]
